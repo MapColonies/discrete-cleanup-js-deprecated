@@ -1,0 +1,16 @@
+{
+  "openapiConfig": {
+    "filePath": "OPENAPI_FILE_PATH"
+  },
+  "logger": {
+    "level": "LOG_LEVEL"
+  },
+  "server": {
+    "port": "SERVER_PORT",
+    "request": {
+      "payload": {
+        "limit": "REQUEST_PAYLOAD_LIMIT"
+      }
+    }
+  }
+}
