@@ -14,8 +14,8 @@ async function getNotCleanedTasks() {
 function getURIsArray(discreteArray) {
   const fileURIsARray = discreteArray.map((discrete) => discrete.metadata.fileUris);
   const allURIs = [];
-  for (let uriArray of fileURIsARray) {
-    for (let uri of uriArray) {
+  for (const uriArray of fileURIsARray) {
+    for (const uri of uriArray) {
       allURIs.push(uri);
     }
   }
