@@ -10,7 +10,7 @@
     "prelint:fix": "npm run format:fix",
     "prelint": "npm run format",
     "lint:openapi": "openapi lint ./openapi3.yaml",
-    "lint": "eslint .",
+    "lint": "eslint \"src/**/*\"",
     "lint:fix": "eslint --fix .",
     "release": "standard-version",
     "test": "npm run lint && npm run test:unit",
