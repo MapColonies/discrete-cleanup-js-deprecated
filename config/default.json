@@ -1,19 +1,9 @@
 {
-  "openapiConfig": {
-    "filePath": "./openapi3.yaml",
-    "basePath": "/docs",
-    "rawPath": "/api",
-    "uiPath": "/api"
-  },
   "logger": {
     "level": "info"
   },
-  "server": {
-    "port": "8080",
-    "request": {
-      "payload": {
-        "limit": "1mb"
-      }
-    }
-  }
+  "db": {
+    "url": "http://localhost:8080"
+  },
+  "batch_size": 100
 }
