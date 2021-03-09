@@ -5,5 +5,16 @@
   "db": {
     "url": "http://localhost:8080"
   },
+  "s3": {
+    "apiVersion": "2006-03-01",
+    "endpoint": "http://localhost:9000",
+    "accessKeyId": "minioadmin",
+    "secretAccessKey": "minioadmin",
+    "sslEnabled": false,
+    "maxRetries": 3,
+    "bucket": "raster",
+    "listObjectMaxKeys": 100,
+    "deleteBatchSize": 5
+  },
   "batch_size": 100
 }

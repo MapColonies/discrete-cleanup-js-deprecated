@@ -5,5 +5,15 @@
   "db": {
     "url": "DB_URL"
   },
+  "s3": {
+    "apiVersion": "S3_API_VERSION",
+    "endpoint": "S3_ENDPOINT",
+    "accessKeyId": "S3_ACCESS_KEY_ID",
+    "secretAccessKey": "S3_SECRET_ACCESS_KEY",
+    "sslEnabled": "S3_SSL_ENABLED",
+    "maxRetries": "S3_MAX_RETRIES",
+    "bucket": "S3_BUCKET",
+    "listObjectMaxKeys": "S3_LIST_MAX_KEYS"
+  },
   "batch_size": "BATCH_SIZE"
 }

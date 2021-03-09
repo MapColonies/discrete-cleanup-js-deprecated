@@ -25,5 +25,5 @@ jobs:
           github_token: ${{ secrets.github_token }}
           # Enable linters
           eslint: true
-          prettier: true
+          prettier: false
           eslint_extensions: js
