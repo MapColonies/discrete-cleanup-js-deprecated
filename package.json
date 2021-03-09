@@ -21,7 +21,6 @@
   "license": "ISC",
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged",
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
