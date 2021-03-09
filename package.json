@@ -36,6 +36,8 @@
   },
   "dependencies": {
     "@map-colonies/mc-logger": "^1.2.1",
+    "aws-sdk": "^2.858.0",
+    "axios": "^0.21.1",
     "config": "^3.3.3",
     "js-yaml": "^3.14.1"
   },
