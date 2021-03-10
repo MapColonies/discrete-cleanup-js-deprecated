@@ -88,7 +88,7 @@ async function parseItemsFromS3(Prefix, ContinuationToken) {
       Bucket: s3.bucket,
       MaxKeys: s3.listObjectMaxKeys,
       Prefix,
-      ContinuationToken,
+      ContinuationToken
     })
     .promise();
   const prepareItemsToDeletion = res.Contents.map((content) => {
@@ -96,7 +96,7 @@ async function parseItemsFromS3(Prefix, ContinuationToken) {
   });
   return {
     prepareItemsToDeletion,
-    ContinuationToken: res.NextContinuationToken,
+    ContinuationToken: res.NextContinuationToken
   };
 }
 
