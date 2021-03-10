@@ -5,6 +5,9 @@
   "db": {
     "url": "DB_URL"
   },
+  "mapproxy_api": {
+    "url": "MAPPROXY_API_URL"
+  },
   "s3": {
     "apiVersion": "S3_API_VERSION",
     "endpoint": "S3_ENDPOINT",
