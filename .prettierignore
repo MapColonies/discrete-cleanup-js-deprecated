@@ -1,0 +1,10 @@
+coverage
+.github
+.gitignore
+CHANGELOG.md
+commitlint.config.js
+package-lock.json
+package.json
+README.md
+node_modules
+*.html
