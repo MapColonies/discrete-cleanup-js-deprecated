@@ -16,6 +16,11 @@ async function getNotCleanedTasks() {
   return result.data;
 }
 
+async function getFailedAndNotCleanedTasks() {
+  const result = await getDataFromDB('discrete?cleaned=false&status=failed');
+  return result.data;
+}
+
 function getURIsArray(discreteArray) {
   const fileURIsARray = discreteArray.map((discrete) => discrete.metadata.fileUris);
   const allURIs = [];
@@ -33,88 +38,97 @@ function deleteFiles(pathArray) {
 }
 
 async function deleteChunks(urisArray) {
-  const chunkSize = config.get('batch_size');
+  const chunkSize = config.get('batchSize').fsDeletion;
   let chunkedArray = [];
-
   for (let i = 0; i < urisArray.length; i += chunkSize) {
-    chunkedArray = urisArray.slice(i, i + chunkSize);
-    logger.info(`Deleting files from FS in paths: ['${chunkedArray.join('', '')}']`);
-    await deleteFiles(chunkedArray);
+    try {
+      chunkedArray = urisArray.slice(i, i + chunkSize);
+      logger.info(`Trying to delete files from FS (first file starts at ${chunkedArray[0]})`);
+      logger.debug(chunkedArray.join(''));
+      await deleteFiles(chunkedArray);
+    } catch (err) {
+      logger.error(`Could not delete files from FS in path: ['${chunkedArray.join('')}']`);
+    }
   }
 }
 
-async function deleteOriginalFiles() {
-  const notCleaned = await getNotCleanedTasks();
+async function deleteOriginalFiles(notCleaned) {
   const allURIs = await getURIsArray(notCleaned);
   await deleteChunks(allURIs);
 }
 
-async function s3MainDeleteLoop() {
-  const discretes = await getItemsToDelete();
-  for (const discrete of discretes) {
+async function s3MainDeleteLoop(notCleaned) {
+  for (const discrete of notCleaned) {
     const { id, version } = discrete;
-
     await deleteS3WithBatch(`${id}/${version}`);
-    await deleteMapProxyLayer(`${id}-${version}`);
   }
 }
 
-async function getItemsToDelete() {
-  const result = await getDataFromDB('discrete?cleaned=false&status=failed');
-  return result.data;
-}
-
 async function deleteS3WithBatch(Prefix) {
-  const BATCH_SIZE = config.get('s3').deleteBatchSize;
-  let { prepareItemsToDeletion, ContinuationToken } = await parseItemsFromS3(Prefix);
+  let { itemsToDelete, ContinuationToken } = await parseItemsFromS3(Prefix);
 
-  while (prepareItemsToDeletion.length !== 0) {
-    const s3DeletePromiseArray = [];
-
-    for (let i = 0; i < BATCH_SIZE; i++) {
-      s3DeletePromiseArray.push(deleteFromS3(prepareItemsToDeletion));
-    }
-
-    await Promise.all(s3DeletePromiseArray);
-    prepareItemsToDeletion = (await parseItemsFromS3(Prefix, ContinuationToken)).prepareItemsToDeletion;
+  while (itemsToDelete.length !== 0) {
+    await deleteFromS3(itemsToDelete);
+    const prepareItems = await parseItemsFromS3(Prefix, ContinuationToken);
+    itemsToDelete = prepareItems.itemsToDelete;
+    ContinuationToken = prepareItems.ContinuationToken;
   }
 }
 
 async function parseItemsFromS3(Prefix, ContinuationToken) {
   const s3 = config.get('s3');
-  logger.info(`Listing ${s3.listObjectMaxKeys} objects from bucket ${s3.bucket}`);
+  const BATCH_SIZE = config.get('batchSize').s3Deletion;
+  logger.info(`Listing objects with prefix ${Prefix} from bucket ${s3.bucket}`);
+  logger.debug(`Objects deleted: ${s3.listObjectMaxKeys}`)
   const res = await s3Client
     .listObjectsV2({
       Bucket: s3.bucket,
-      MaxKeys: s3.listObjectMaxKeys,
+      MaxKeys: BATCH_SIZE,
       Prefix,
       ContinuationToken
     })
     .promise();
-  const prepareItemsToDeletion = res.Contents.map((content) => {
+  const itemsToDelete = res.Contents.map((content) => {
     return { Key: content.Key };
   });
   return {
-    prepareItemsToDeletion,
+    itemsToDelete,
     ContinuationToken: res.NextContinuationToken
   };
 }
 
 async function deleteFromS3(Objects) {
   const bucket = config.get('s3').bucket;
-  logger.info(`Deleting ${JSON.stringify(Objects)} objects from bucket ${bucket}`);
+  logger.info(`Deleting objects from bucket ${bucket}`);
+  logger.debug(JSON.stringify(Objects));
   return s3Client.deleteObjects({ Bucket: bucket, Delete: { Objects } }).promise();
 }
 
-async function deleteMapProxyLayer(layerName) {
+async function deleteMapProxyLayer(discreteLayers) {
   const mapproxyUrl = config.get('mapproxy_api').url;
-  logger.info(`Deleting layer [${layerName}] from mapproxy in path [${mapproxyUrl}]`);
-  await axios.delete(`${mapproxyUrl}/layer/${layerName}`);
+  const mapProxyLayersToDelete = [];
+  for (const discrete of discreteLayers) {
+    mapProxyLayersToDelete.push(axios.delete(`${mapproxyUrl}/layer/${discrete.id}-${discrete.version}`));
+  }
+  logger.info(`Deleting layers [${discreteLayers.map((discrete) => `${discrete.id}-${discrete.version}`)}] from mapproxy in path [${mapproxyUrl}]`);
+  await Promise.all(mapProxyLayersToDelete);
 }
 
 async function main() {
-  await deleteOriginalFiles();
-  await s3MainDeleteLoop();
+  const notCleaned = await getNotCleanedTasks();
+  const notCleanedAndFailed = await getFailedAndNotCleanedTasks();
+  const BATCH_SIZE = config.get('batchSize').discreteLayers;
+
+  for (let i = 0; i < notCleaned.length; i += BATCH_SIZE) {
+    const currentBatch = notCleaned.slice(i, i + BATCH_SIZE);
+    await deleteOriginalFiles(currentBatch);
+  }
+
+  for (let i = 0; i < notCleanedAndFailed.length; i += BATCH_SIZE) {
+    const currentBatch = notCleanedAndFailed.slice(i, i + BATCH_SIZE);
+    await s3MainDeleteLoop(currentBatch);
+    await deleteMapProxyLayer(currentBatch);
+  }
 }
 
 main()

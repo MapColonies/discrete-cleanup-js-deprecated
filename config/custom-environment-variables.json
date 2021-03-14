@@ -18,5 +18,9 @@
     "bucket": "S3_BUCKET",
     "listObjectMaxKeys": "S3_LIST_MAX_KEYS"
   },
-  "batch_size": "BATCH_SIZE"
+  "batchSize": {
+    "discreteLayers": "BATCH_SIZE_DISCRETE_LAYERS",
+    "fsDeletion": "BATCH_SIZE_FILE_SYSTEM",
+    "s3Deletion": "BATCH_SIZE_S3"
+  }
 }
