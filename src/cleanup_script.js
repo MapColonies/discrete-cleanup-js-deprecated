@@ -4,20 +4,20 @@ const { promises } = require('fs');
 const s3Client = require('./s3_client');
 const logger = require('./logger');
 
-function getDataFromDB(url) {
+function executeDBRequest(method, url) {
   const dbConfig = config.get('db');
   const urlToExecute = `${dbConfig.url}/${url}`;
-  logger.info(`Retrieving not cleaned tasks from DB in url ${urlToExecute}`);
-  return axios.get(urlToExecute);
+  logger.info(`Executing ${method.toUpperCase()} on ${urlToExecute}`);
+  return axios({ method, url: urlToExecute });
 }
 
-async function getNotCleanedTasks() {
-  const result = await getDataFromDB('discrete?cleaned=false');
+async function getSuccessNotCleanedTasks() {
+  const result = await executeDBRequest('get', 'discrete?cleaned=false&status=success');
   return result.data;
 }
 
 async function getFailedAndNotCleanedTasks() {
-  const result = await getDataFromDB('discrete?cleaned=false&status=failed');
+  const result = await executeDBRequest('get', 'discrete?cleaned=false&status=failed');
   return result.data;
 }
 
@@ -114,20 +114,31 @@ async function deleteMapProxyLayer(discreteLayers) {
   await Promise.all(mapProxyLayersToDelete);
 }
 
+async function markAsCompleted(notCleaned) {
+  const updateArray = [];
+  for (const discrete of notCleaned) {
+    updateArray.push(executeDBRequest('put', `discrete/${discrete.id}/${discrete.version}`));
+  }
+  await Promise.all(updateArray);
+}
+
 async function main() {
-  const notCleaned = await getNotCleanedTasks();
+  const notCleanedAndSuccess = await getSuccessNotCleanedTasks();
   const notCleanedAndFailed = await getFailedAndNotCleanedTasks();
   const BATCH_SIZE = config.get('batchSize').discreteLayers;
 
-  for (let i = 0; i < notCleaned.length; i += BATCH_SIZE) {
-    const currentBatch = notCleaned.slice(i, i + BATCH_SIZE);
-    await deleteOriginalFiles(currentBatch);
-  }
-
   for (let i = 0; i < notCleanedAndFailed.length; i += BATCH_SIZE) {
     const currentBatch = notCleanedAndFailed.slice(i, i + BATCH_SIZE);
+    await deleteOriginalFiles(currentBatch);
     await s3MainDeleteLoop(currentBatch);
     await deleteMapProxyLayer(currentBatch);
+    await markAsCompleted(currentBatch);
+  }
+
+  for (let i = 0; i < notCleanedAndSuccess.length; i += BATCH_SIZE) {
+    const currentBatch = notCleanedAndSuccess.slice(i, i + BATCH_SIZE);
+    await deleteOriginalFiles(currentBatch);
+    await markAsCompleted(currentBatch);
   }
 }
 
