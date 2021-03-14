@@ -16,8 +16,11 @@
     "sslEnabled": false,
     "maxRetries": 3,
     "bucket": "raster",
-    "listObjectMaxKeys": 100,
     "deleteBatchSize": 5
   },
-  "batch_size": 100
+  "batchSize": {
+    "discreteLayers": 10,
+    "fsDeletion": 10000,
+    "s3Deletion": 1000
+  }
 }
