@@ -79,7 +79,7 @@ async function parseItemsFromS3(Prefix, ContinuationToken) {
   const s3 = config.get('s3');
   const BATCH_SIZE = config.get('batchSize').s3Deletion;
   logger.info(`Listing objects with prefix ${Prefix} from bucket ${s3.bucket}`);
-  logger.debug(`Objects deleted: ${s3.listObjectMaxKeys}`)
+  logger.debug(`Objects deleted: ${s3.listObjectMaxKeys}`);
   const res = await s3Client
     .listObjectsV2({
       Bucket: s3.bucket,
