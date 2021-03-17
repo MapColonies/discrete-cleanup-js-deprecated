@@ -1,1 +1,26 @@
-{}
+{
+  "logger": {
+    "level": "info"
+  },
+  "db": {
+    "url": "http://localhost:8080"
+  },
+  "mapproxy_api": {
+    "url": "http://localhost:8081"
+  },
+  "s3": {
+    "apiVersion": "2006-03-01",
+    "endpoint": "http://localhost:9000",
+    "accessKeyId": "minioadmin",
+    "secretAccessKey": "minioadmin",
+    "sslEnabled": false,
+    "maxRetries": 3,
+    "bucket": "raster",
+    "deleteBatchSize": 5
+  },
+  "batchSize": {
+    "discreteLayers": 1,
+    "fsDeletion": 1,
+    "s3Deletion": 1
+  }
+}

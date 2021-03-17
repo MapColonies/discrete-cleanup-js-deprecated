@@ -2,7 +2,7 @@
   "name": "discrete-cleanup",
   "version": "1.0.0",
   "description": "This is the discrete layers cleanup job",
-  "main": "./src/cleanup_script.js",
+  "main": "./src/index.js",
   "scripts": {
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
@@ -16,7 +16,7 @@
     "test": "npm run lint && npm run test:unit",
     "prebuild": "npm run clean",
     "build": "tsc --project tsconfig.build.json  && npm run assets:copy",
-    "start": "node ./src/cleanup_script.js"
+    "start": "node ./src/index.js"
   },
   "directories": {
     "test": "tests"
@@ -38,6 +38,7 @@
     "aws-sdk": "^2.858.0",
     "axios": "^0.21.1",
     "config": "^3.3.3",
+    "http-status-codes": "^2.1.4",
     "js-yaml": "^3.14.1"
   },
   "devDependencies": {
