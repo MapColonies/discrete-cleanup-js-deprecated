@@ -21,6 +21,7 @@ function createS3Client() {
     s3ForcePathStyle: true
   };
   s3Client = new S3(clientConfig);
+  return s3Client;
 }
 
 module.exports = { getS3Instance };

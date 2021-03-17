@@ -6,6 +6,6 @@ new CleanupScript()
   .main()
   .then(() => logger.info('Successfully completed cleanup job'))
   .catch((error) => {
-    logger.error('An error occured: ' + error.message);
+    logger.error('An error occured: ' + JSON.stringify(error, Object.getOwnPropertyNames(error)));
     process.exit(1);
   });

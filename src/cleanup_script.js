@@ -28,13 +28,8 @@ class CleanupScript {
   }
 
   getURIsArray(discreteArray) {
-    const fileURIsARray = discreteArray.map((discrete) => discrete.metadata.fileUris);
-    const allURIs = [];
-    for (const uriArray of fileURIsARray) {
-      for (const uri of uriArray) {
-        allURIs.push(uri);
-      }
-    }
+    const fileURIsArray = discreteArray.map((discrete) => discrete.metadata.fileUris);
+    const allURIs = fileURIsArray.flat(); // Flatten an array from [[[[1, 2]]]] to [1,2]
     return allURIs;
   }
 
@@ -43,7 +38,7 @@ class CleanupScript {
     return Promise.all(promiseDeleteArray);
   }
 
-  async deleteChunks(urisArray) {
+  async deleteFsChunks(urisArray) {
     const chunkSize = config.get('batchSize').fsDeletion;
     let chunkedArray = [];
     for (let i = 0; i < urisArray.length; i += chunkSize) {
@@ -60,7 +55,7 @@ class CleanupScript {
 
   async deleteOriginalFiles(notCleaned) {
     const allURIs = await this.getURIsArray(notCleaned);
-    await this.deleteChunks(allURIs);
+    await this.deleteFsChunks(allURIs);
   }
 
   async s3MainDeleteLoop(notCleaned) {

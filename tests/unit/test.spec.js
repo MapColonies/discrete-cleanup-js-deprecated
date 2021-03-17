@@ -29,7 +29,7 @@ describe('Cleanup Script', () => {
     const batchSize = config.get('batchSize').fsDeletion;
     const deleteFilesMock = jest.fn().mockReturnValue(undefined);
     cleanupScript.deleteFiles = deleteFilesMock;
-    await cleanupScript.deleteChunks(MockData.urisArray);
+    await cleanupScript.deleteFsChunks(MockData.urisArray);
 
     for (let i = 0; i < MockData.urisArray.length; i += batchSize) {
       expect(deleteFilesMock).toHaveBeenCalledWith(MockData.urisArray.slice(i, i + batchSize));
