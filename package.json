@@ -38,6 +38,7 @@
     "aws-sdk": "^2.858.0",
     "axios": "^0.21.1",
     "config": "^3.3.3",
+    "http-status-codes": "^2.1.4",
     "js-yaml": "^3.14.1"
   },
   "devDependencies": {

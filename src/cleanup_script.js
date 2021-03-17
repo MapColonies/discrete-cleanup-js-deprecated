@@ -1,5 +1,6 @@
 const config = require('config');
 const axios = require('axios');
+const { StatusCodes } = require('http-status-codes');
 const { promises } = require('fs');
 const { getS3Instance } = require('./s3_client');
 const { getLoggerInstance } = require('./logger');
@@ -117,9 +118,13 @@ class CleanupScript {
     try {
       await Promise.all(mapProxyLayersToDelete);
     } catch (err) {
-      this.logger.info(
-        `Could not delete layers [${discreteLayers.map((discrete) => `${discrete.id}-${discrete.version}`)}] from mapproxy in path [${mapproxyUrl}]`
-      );
+      if (err && err.response && err.response.status === StatusCodes.NOT_FOUND) {
+        this.logger.info(
+          `Could not find layers [${discreteLayers.map((discrete) => `${discrete.id}-${discrete.version}`)}] from mapproxy in path [${mapproxyUrl}]`
+        );
+      } else {
+        throw err;
+      }
     }
   }
 
