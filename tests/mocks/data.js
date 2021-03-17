@@ -19,7 +19,7 @@ const discreteArray = [
     updateDate: '2021-03-15T09:14:29.749Z',
     status: 'Completed',
     reason: '',
-    cleaned: true
+    isCleaned: true
   },
   {
     id: 'demo_2',
@@ -41,7 +41,7 @@ const discreteArray = [
     updateDate: '2021-03-15T09:14:29.749Z',
     status: 'Completed',
     reason: '',
-    cleaned: true
+    isCleaned: true
   },
   {
     id: 'demo_3',
@@ -63,7 +63,7 @@ const discreteArray = [
     updateDate: '2021-03-15T09:14:29.749Z',
     status: 'Completed',
     reason: '',
-    cleaned: true
+    isCleaned: true
   },
   {
     id: 'demo_4',
@@ -85,7 +85,7 @@ const discreteArray = [
     updateDate: '2021-03-15T09:14:29.749Z',
     status: 'Completed',
     reason: '',
-    cleaned: true
+    isCleaned: true
   },
   {
     id: 'demo_5',
@@ -107,7 +107,7 @@ const discreteArray = [
     updateDate: '2021-03-15T09:14:29.749Z',
     status: 'Completed',
     reason: '',
-    cleaned: true
+    isCleaned: true
   },
   {
     id: 'demo_6',
@@ -129,7 +129,7 @@ const discreteArray = [
     updateDate: '2021-03-15T09:14:29.749Z',
     status: 'Completed',
     reason: '',
-    cleaned: true
+    isCleaned: true
   }
 ];
 

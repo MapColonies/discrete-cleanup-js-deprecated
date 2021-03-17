@@ -18,12 +18,12 @@ class CleanupScript {
   }
 
   async getSuccessNotCleanedTasks() {
-    const result = await this.executeDBRequest('get', 'discrete?cleaned=false&status=Completed');
+    const result = await this.executeDBRequest('get', 'discrete?isCleaned=false&status=Completed');
     return result.data;
   }
 
   async getFailedAndNotCleanedTasks() {
-    const result = await this.executeDBRequest('get', 'discrete?cleaned=false&status=Failed');
+    const result = await this.executeDBRequest('get', 'discrete?isCleaned=false&status=Failed');
     return result.data;
   }
 
@@ -114,13 +114,19 @@ class CleanupScript {
     this.logger.info(
       `Deleting layers [${discreteLayers.map((discrete) => `${discrete.id}-${discrete.version}`)}] from mapproxy in path [${mapproxyUrl}]`
     );
-    await Promise.all(mapProxyLayersToDelete);
+    try {
+      await Promise.all(mapProxyLayersToDelete);
+    } catch (err) {
+      this.logger.info(
+        `Could not delete layers [${discreteLayers.map((discrete) => `${discrete.id}-${discrete.version}`)}] from mapproxy in path [${mapproxyUrl}]`
+      );
+    }
   }
 
   async markAsCompleted(notCleaned) {
     const updateArray = [];
     for (const discrete of notCleaned) {
-      updateArray.push(this.executeDBRequest('put', `discrete/${discrete.id}/${discrete.version}`, { cleaned: true }));
+      updateArray.push(this.executeDBRequest('put', `discrete/${discrete.id}/${discrete.version}`, { isCleaned: true }));
     }
     await Promise.all(updateArray);
   }
