@@ -14,7 +14,7 @@ const discreteArray = [
       }
     ],
     metadata: {
-      fileUris: ['/fakePath', '/fakePath2', '/fakePath3']
+      fileUris: ['/fakePath1', '/fakePath2', '/fakePath3']
     },
     updateDate: '2021-03-15T09:14:29.749Z',
     status: 'Completed',
@@ -36,7 +36,7 @@ const discreteArray = [
       }
     ],
     metadata: {
-      fileUris: ['/fakePath', '/fakePath2', '/fakePath3']
+      fileUris: ['/fakePath4', '/fakePath5', '/fakePath6']
     },
     updateDate: '2021-03-15T09:14:29.749Z',
     status: 'Completed',
@@ -58,7 +58,7 @@ const discreteArray = [
       }
     ],
     metadata: {
-      fileUris: ['/fakePath', '/fakePath2', '/fakePath3']
+      fileUris: ['/fakePath7', '/fakePath8', '/fakePath9']
     },
     updateDate: '2021-03-15T09:14:29.749Z',
     status: 'Completed',
@@ -80,7 +80,7 @@ const discreteArray = [
       }
     ],
     metadata: {
-      fileUris: ['/fakePath', '/fakePath2', '/fakePath3']
+      fileUris: ['/fakePath10', '/fakePath11', '/fakePath12']
     },
     updateDate: '2021-03-15T09:14:29.749Z',
     status: 'Completed',
@@ -102,7 +102,7 @@ const discreteArray = [
       }
     ],
     metadata: {
-      fileUris: ['/fakePath', '/fakePath2', '/fakePath3']
+      fileUris: ['/fakePath13', '/fakePath14', '/fakePath15']
     },
     updateDate: '2021-03-15T09:14:29.749Z',
     status: 'Completed',
@@ -124,7 +124,7 @@ const discreteArray = [
       }
     ],
     metadata: {
-      fileUris: ['/fakePath', '/fakePath2', '/fakePath3']
+      fileUris: ['/fakePath16', '/fakePath17', '/fakePath18']
     },
     updateDate: '2021-03-15T09:14:29.749Z',
     status: 'Completed',
@@ -133,7 +133,26 @@ const discreteArray = [
   }
 ];
 
-const urisArray = ['/fakePath', '/fakePath2', '/fakePath3', '/fakePath4', '/fakePath5', '/fakePath6', '/fakePath7'];
+const urisArray = [
+  '/fakePath1',
+  '/fakePath2',
+  '/fakePath3',
+  '/fakePath4',
+  '/fakePath5',
+  '/fakePath6',
+  '/fakePath7',
+  '/fakePath8',
+  '/fakePath9',
+  '/fakePath10',
+  '/fakePath11',
+  '/fakePath12',
+  '/fakePath13',
+  '/fakePath14',
+  '/fakePath15',
+  '/fakePath16',
+  '/fakePath17',
+  '/fakePath18'
+];
 
 const s3KeysArray = urisArray.map((uri) => {
   return { Key: uri };

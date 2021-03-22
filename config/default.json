@@ -8,6 +8,8 @@
   "mapproxy_api": {
     "url": "http://localhost:8081"
   },
+  "service_provider": "S3",
+  "fs_tiles_location": "/home/roees/Desktop/discrete-cleanup/tiles",
   "s3": {
     "apiVersion": "2006-03-01",
     "endpoint": "http://localhost:9000",
@@ -18,9 +20,9 @@
     "bucket": "raster",
     "deleteBatchSize": 5
   },
-  "batchSize": {
+  "batch_size": {
     "discreteLayers": 10,
-    "fsDeletion": 10000,
-    "s3Deletion": 1000
+    "tiffDeletion": 10000,
+    "tilesDeletion": 1000
   }
 }

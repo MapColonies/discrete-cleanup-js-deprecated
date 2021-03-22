@@ -7,38 +7,38 @@ jest.spyOn(logger, 'getLoggerInstance').mockReturnValue({
   info: jest.fn(),
   error: jest.fn()
 });
-const CleanupScript = require('../../src/cleanup_script');
+const CleanupScript = require('../../src/cleanupScript');
+const TiffDeletion = require('../../src/tiffDeletion');
+const TilesDeletion = require('../../src/tilesDeletion');
 
 describe('Cleanup Script', () => {
-  let cleanupScript;
-
-  beforeEach(() => {
-    cleanupScript = new CleanupScript();
-  });
-
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  it('Should return a URIs array', () => {
-    const urisArray = cleanupScript.getURIsArray(MockData.discreteArray);
-    expect(urisArray).toBeInstanceOf(Array);
+  it('Checks tiffs parser functionality', async () => {
+    const tiffDeletionInstance = new TiffDeletion();
+    tiffDeletionInstance.deleteFromFs = jest.fn().mockReturnValue(undefined);
+    await tiffDeletionInstance.delete(MockData.discreteArray);
+
+    expect(tiffDeletionInstance.deleteFromFs).toHaveBeenCalledWith(MockData.urisArray);
   });
 
-  it('Should delete files from FS according to batch', async () => {
-    const batchSize = config.get('batchSize').fsDeletion;
-    const deleteFilesMock = jest.fn().mockReturnValue(undefined);
-    cleanupScript.deleteFiles = deleteFilesMock;
-    await cleanupScript.deleteFsChunks(MockData.urisArray);
+  it('Should delete tiffs from FS according to batch', async () => {
+    const batchSize = config.get('batch_size').tiffDeletion;
+    const tiffDeletion = new TiffDeletion();
+    tiffDeletion.deleteFiles = jest.fn().mockReturnValue(undefined);
+    await tiffDeletion.deleteFromFs(MockData.urisArray);
 
     for (let i = 0; i < MockData.urisArray.length; i += batchSize) {
-      expect(deleteFilesMock).toHaveBeenCalledWith(MockData.urisArray.slice(i, i + batchSize));
+      expect(tiffDeletion.deleteFiles).toHaveBeenCalledWith(MockData.urisArray.slice(i, i + batchSize));
     }
 
-    expect(deleteFilesMock).toHaveBeenCalledTimes(MockData.urisArray.length / batchSize);
+    expect(tiffDeletion.deleteFiles).toHaveBeenCalledTimes(MockData.urisArray.length / batchSize);
   });
 
   it('Should process next S3 delete batch with correcet continuation token', async () => {
+    const tilesDeletion = new TilesDeletion();
     const prepareItemsMock = jest
       .fn()
       .mockReturnValueOnce({
@@ -49,12 +49,11 @@ describe('Cleanup Script', () => {
         itemsToDelete: [],
         ContinuationToken: 789
       });
-    cleanupScript.parseItemsFromS3 = prepareItemsMock;
+    tilesDeletion.parseItemsFromS3 = prepareItemsMock;
 
-    const deleteFromS3Mock = jest.fn().mockReturnValue(undefined);
-    cleanupScript.deleteFromS3 = deleteFromS3Mock;
-    await cleanupScript.deleteS3WithBatch(MockData.Prefix);
+    tilesDeletion.deleteFromS3 = jest.fn().mockReturnValue(undefined);
+    await tilesDeletion.deleteS3WithBatch(MockData.Prefix);
 
-    expect(cleanupScript.parseItemsFromS3).toHaveBeenCalledWith(MockData.Prefix, 123456);
+    expect(tilesDeletion.parseItemsFromS3).toHaveBeenCalledWith(MockData.Prefix, 123456);
   });
 });

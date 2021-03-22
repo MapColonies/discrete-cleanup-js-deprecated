@@ -1,4 +1,4 @@
-const CleanupScript = require('./cleanup_script');
+const CleanupScript = require('./cleanupScript');
 const { getLoggerInstance } = require('./logger');
 const logger = getLoggerInstance();
 
