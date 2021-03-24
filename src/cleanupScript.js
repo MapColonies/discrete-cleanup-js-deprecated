@@ -60,8 +60,8 @@ class CleanupScript {
   }
 
   async main() {
-    const tilesDeletionInstance = new TilesDeletion();
     const tiffDeletionInstance = new TiffDeletion();
+    const tilesDeletionInstance = new TilesDeletion();
     const notCleanedAndSuccess = await this.getSuccessNotCleanedTasks();
     const notCleanedAndFailed = await this.getFailedAndNotCleanedTasks();
     const BATCH_SIZE = config.get('batch_size');

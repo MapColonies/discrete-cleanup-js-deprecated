@@ -14,24 +14,10 @@ class TiffDeletion {
   }
 
   async deleteFromFs(pathsArray) {
-    let chunkedArray = [];
-    for (let i = 0; i < pathsArray.length; i += this.batchSize) {
-      try {
-        chunkedArray = pathsArray.slice(i, i + this.batchSize);
-        this.logger.info(`Trying to delete files from FS (first file starts at ${chunkedArray[0]})`);
-        this.logger.debug(chunkedArray.join(''));
-        await this.deleteFiles(chunkedArray);
-      } catch (err) {
-        this.logger.error(
-          `Could not delete files from FS in path: ['${chunkedArray.join('')}'], error: ${JSON.stringify(err, Object.getOwnPropertyNames(err))}`
-        );
-      }
+    for (const path of pathsArray) {
+      this.logger.info(`Deleting directories from FS in path: ${path}`);
+      await promises.rmdir(path, { recursive: true });
     }
-  }
-
-  async deleteFiles(pathsArray) {
-    const promiseDeleteArray = pathsArray.map((path) => promises.unlink(path));
-    return Promise.all(promiseDeleteArray);
   }
 
   tiffsLocationParser(discreteArray) {

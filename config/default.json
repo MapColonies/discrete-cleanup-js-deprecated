@@ -9,7 +9,9 @@
     "url": "http://localhost:8081"
   },
   "service_provider": "S3",
-  "fs_tiles_location": "/home/roees/Desktop/discrete-cleanup/tiles",
+  "fs": {
+    "tiles_location": "/tmp/tiles"
+  },
   "s3": {
     "apiVersion": "2006-03-01",
     "endpoint": "http://localhost:9000",

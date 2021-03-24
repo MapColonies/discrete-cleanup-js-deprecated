@@ -7,7 +7,6 @@ jest.spyOn(logger, 'getLoggerInstance').mockReturnValue({
   info: jest.fn(),
   error: jest.fn()
 });
-const CleanupScript = require('../../src/cleanupScript');
 const TiffDeletion = require('../../src/tiffDeletion');
 const TilesDeletion = require('../../src/tilesDeletion');
 

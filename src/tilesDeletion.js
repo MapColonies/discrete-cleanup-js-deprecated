@@ -66,33 +66,17 @@ class TilesDeletion {
   }
 
   async executeFsLoop(pathsArray) {
-    let chunkedArray = [];
-    for (let i = 0; i < pathsArray.length; i += this.batchSize) {
-      try {
-        chunkedArray = pathsArray.slice(i, i + this.batchSize);
-        this.logger.info(`Trying to delete directories from FS at paths: ['${chunkedArray.join(', ')}']`);
-        await this.deleteDirectory(chunkedArray);
-      } catch (err) {
-        this.logger.error(
-          `Could not delete directories from FS in path: ['${chunkedArray.join(', ')}'], error: ${JSON.stringify(
-            err,
-            Object.getOwnPropertyNames(err)
-          )}`
-        );
-      }
+    for (const path of pathsArray) {
+      this.logger.info(`Deleting directories from FS in path: ${path}`);
+      await promises.rmdir(path, { recursive: true });
     }
-  }
-
-  async deleteDirectory(pathsArray) {
-    const promiseDeleteArray = pathsArray.map((path) => promises.rmdir(path, { recursive: true }));
-    return Promise.all(promiseDeleteArray);
   }
 
   tilesLocationParser(discreteArray) {
     if (config.get('service_provider') === SERVICE_PROVIDER.S3) {
       return discreteArray.map((discrete) => `${discrete.id}/${discrete.version}`);
     } else {
-      const fsTilesLocation = config.get('fs_tiles_location');
+      const fsTilesLocation = config.get('fs').tiles_location;
       const allURIs = discreteArray.map((discrete) => `${fsTilesLocation}/${discrete.id}/${discrete.version}`);
       return allURIs;
     }
