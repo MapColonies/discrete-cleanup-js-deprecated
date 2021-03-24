@@ -15,7 +15,7 @@ class CleanupScript {
   executeDBRequest(method, url, data) {
     const dbConfig = config.get('db');
     const urlToExecute = `${dbConfig.url}/${url}`;
-    this.logger.log(`info`, `Executing ${method.toUpperCase()} on ${urlToExecute}`);
+    this.logger.log('info', `Executing ${method.toUpperCase()} on ${urlToExecute}`);
     return axios({ method, url: urlToExecute, data });
   }
 
@@ -36,7 +36,7 @@ class CleanupScript {
       mapProxyLayersToDelete.push(axios.delete(`${mapproxyUrl}/layer/${discrete.id}-${discrete.version}`));
     }
     this.logger.log(
-      `info`,
+      'info',
       `Deleting layers [${discreteLayers.map((discrete) => `${discrete.id}-${discrete.version}`)}] from mapproxy in path [${mapproxyUrl}]`
     );
     try {
@@ -44,7 +44,7 @@ class CleanupScript {
     } catch (err) {
       if (err && err.response && err.response.status === StatusCodes.NOT_FOUND) {
         this.logger.log(
-          `info`,
+          'info',
           `Could not find layers [${discreteLayers.map((discrete) => `${discrete.id}-${discrete.version}`)}] from mapproxy in path [${mapproxyUrl}]`
         );
       } else {

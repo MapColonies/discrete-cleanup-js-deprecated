@@ -39,7 +39,7 @@ class TilesDeletion {
   }
 
   async parseItemsFromS3(Prefix, ContinuationToken) {
-    this.logger.log(`info`, `Listing objects with prefix ${Prefix} from bucket ${this.s3Config.bucket}`);
+    this.logger.log('info', `Listing objects with prefix ${Prefix} from bucket ${this.s3Config.bucket}`);
     const res = await this.s3Client
       .listObjectsV2({
         Bucket: this.s3Config.bucket,
@@ -59,8 +59,8 @@ class TilesDeletion {
 
   async deleteFromS3(Objects) {
     const bucket = config.get('s3').bucket;
-    this.logger.log(`info`, `Deleting objects from bucket ${bucket}`);
-    this.logger.log(`debug`, JSON.stringify(Objects));
+    this.logger.log('info', `Deleting objects from bucket ${bucket}`);
+    this.logger.log('debug', JSON.stringify(Objects));
     return this.s3Client.deleteObjects({ Bucket: bucket, Delete: { Objects } }).promise();
   }
 
@@ -68,7 +68,7 @@ class TilesDeletion {
     let batchArray = [];
     for (let i = 0; i < pathsArray.length; i += this.batchSize) {
       batchArray = pathsArray.slice(i, i + this.batchSize);
-      this.logger.log(`info`, `Deleting directories from FS in path: [${batchArray.join(',')}]`);
+      this.logger.log('info', `Deleting directories from FS in path: [${batchArray.join(',')}]`);
       await this.deleteDirs(batchArray);
     }
   }

@@ -2,10 +2,7 @@ const config = require('config');
 const MockData = require('../mocks/data');
 const logger = require('../../src/logger');
 jest.spyOn(logger, 'getLoggerInstance').mockReturnValue({
-  debug: jest.fn(),
-  warn: jest.fn(),
-  info: jest.fn(),
-  error: jest.fn()
+  log: jest.fn()
 });
 const TiffDeletion = require('../../src/tiffDeletion');
 const TilesDeletion = require('../../src/tilesDeletion');
