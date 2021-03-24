@@ -8,6 +8,10 @@
   "mapproxy_api": {
     "url": "http://localhost:8081"
   },
+  "service_provider": "S3",
+  "fs": {
+    "tiles_location": "./tiles"
+  },
   "s3": {
     "apiVersion": "2006-03-01",
     "endpoint": "http://localhost:9000",
@@ -18,9 +22,9 @@
     "bucket": "raster",
     "deleteBatchSize": 5
   },
-  "batchSize": {
+  "batch_size": {
     "discreteLayers": 1,
-    "fsDeletion": 1,
-    "s3Deletion": 1
+    "tiffDirectoryDeletion": 1,
+    "tilesDeletion": 1
   }
 }

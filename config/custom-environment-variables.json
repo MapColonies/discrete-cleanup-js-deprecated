@@ -8,6 +8,10 @@
   "mapproxy_api": {
     "url": "MAPPROXY_API_URL"
   },
+  "service_provider": "SERVICE_PROVIDER",
+  "fs": {
+    "tiles_location": "FS_TILES_LOCATION"
+  },
   "s3": {
     "apiVersion": "S3_API_VERSION",
     "endpoint": "S3_ENDPOINT",
@@ -15,12 +19,11 @@
     "secretAccessKey": "S3_SECRET_ACCESS_KEY",
     "sslEnabled": "S3_SSL_ENABLED",
     "maxRetries": "S3_MAX_RETRIES",
-    "bucket": "S3_BUCKET",
-    "listObjectMaxKeys": "S3_LIST_MAX_KEYS"
+    "bucket": "S3_BUCKET"
   },
-  "batchSize": {
+  "batch_size": {
     "discreteLayers": "BATCH_SIZE_DISCRETE_LAYERS",
-    "fsDeletion": "BATCH_SIZE_FILE_SYSTEM",
-    "s3Deletion": "BATCH_SIZE_S3"
+    "tiffDirectoryDeletion": "BATCH_SIZE_DIRECTORY_TIFF_DELETION",
+    "tilesDeletion": "BATCH_SIZE_TILES_DELETION"
   }
 }
