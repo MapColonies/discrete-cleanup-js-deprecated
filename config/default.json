@@ -10,7 +10,7 @@
   },
   "service_provider": "FS",
   "fs": {
-    "tiles_location": "/home/roees/Desktop/lol/tiles"
+    "tiles_location": "./tiles"
   },
   "s3": {
     "apiVersion": "2006-03-01",
