@@ -66,10 +66,17 @@ class TilesDeletion {
   }
 
   async executeFsLoop(pathsArray) {
-    for (const path of pathsArray) {
-      this.logger.info(`Deleting directories from FS in path: ${path}`);
-      await promises.rmdir(path, { recursive: true });
+    let batchArray = [];
+    for (let i = 0; i < pathsArray.length; i += this.batchSize) {
+      batchArray = pathsArray.slice(i, i + this.batchSize);
+      this.logger.info(`Deleting directories from FS in path: [${batchArray.join(',')}]`);
+      await this.deleteDirs(batchArray);
     }
+  }
+
+  async deleteDirs(pathArray) {
+    const promiseDeleteArray = pathArray.map((path) => promises.rmdir(path, { recursive: true }));
+    return Promise.all(promiseDeleteArray);
   }
 
   tilesLocationParser(discreteArray) {

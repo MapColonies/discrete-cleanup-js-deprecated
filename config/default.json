@@ -8,9 +8,9 @@
   "mapproxy_api": {
     "url": "http://localhost:8081"
   },
-  "service_provider": "S3",
+  "service_provider": "FS",
   "fs": {
-    "tiles_location": "/tmp/tiles"
+    "tiles_location": "/home/roees/Desktop/lol/tiles"
   },
   "s3": {
     "apiVersion": "2006-03-01",
@@ -24,7 +24,7 @@
   },
   "batch_size": {
     "discreteLayers": 10,
-    "tiffDeletion": 10000,
-    "tilesDeletion": 1000
+    "tiffDeletion": 1,
+    "tilesDeletion": 1
   }
 }

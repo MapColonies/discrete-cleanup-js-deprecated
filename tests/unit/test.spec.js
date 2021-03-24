@@ -26,14 +26,14 @@ describe('Cleanup Script', () => {
   it('Should delete tiffs from FS according to batch', async () => {
     const batchSize = config.get('batch_size').tiffDeletion;
     const tiffDeletion = new TiffDeletion();
-    tiffDeletion.deleteFiles = jest.fn().mockReturnValue(undefined);
+    tiffDeletion.deleteDirs = jest.fn().mockReturnValue(undefined);
     await tiffDeletion.deleteFromFs(MockData.urisArray);
 
     for (let i = 0; i < MockData.urisArray.length; i += batchSize) {
-      expect(tiffDeletion.deleteFiles).toHaveBeenCalledWith(MockData.urisArray.slice(i, i + batchSize));
+      expect(tiffDeletion.deleteDirs).toHaveBeenCalledWith(MockData.urisArray.slice(i, i + batchSize));
     }
 
-    expect(tiffDeletion.deleteFiles).toHaveBeenCalledTimes(MockData.urisArray.length / batchSize);
+    expect(tiffDeletion.deleteDirs).toHaveBeenCalledTimes(MockData.urisArray.length / batchSize);
   });
 
   it('Should process next S3 delete batch with correcet continuation token', async () => {
