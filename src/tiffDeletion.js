@@ -5,7 +5,7 @@ const { promises } = require('fs');
 class TiffDeletion {
   constructor() {
     this.logger = getLoggerInstance();
-    this.batchSize = config.get('batch_size').tiffDeletion;
+    this.batchSize = config.get('batch_size').tiffDirectoryDeletion;
   }
 
   async delete(discreteArray) {
@@ -17,7 +17,7 @@ class TiffDeletion {
     let batchArray = [];
     for (let i = 0; i < pathsArray.length; i += this.batchSize) {
       batchArray = pathsArray.slice(i, i + this.batchSize);
-      this.logger.info(`Deleting directories from FS in path: [${batchArray.join(',')}]`);
+      this.logger.log(`info`, `Deleting directories from FS in path: [${batchArray.join(',')}]`);
       await this.deleteDirs(batchArray);
     }
   }

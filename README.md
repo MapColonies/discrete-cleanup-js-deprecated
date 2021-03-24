@@ -1,53 +1,29 @@
-# Map Colonies typescript service template
+# Discrete Cleanup Job
 
-----------------------------------
-![badge-alerts-lgtm](https://img.shields.io/lgtm/alerts/github/MapColonies/ts-server-boilerplate?style=for-the-badge)
-![grade-badge-lgtm](https://img.shields.io/lgtm/grade/javascript/github/MapColonies/ts-server-boilerplate?style=for-the-badge)
-![snyk](https://img.shields.io/snyk/vulnerabilities/github/MapColonies/ts-server-boilerplate?style=for-the-badge)
-----------------------------------
+The purpose is to clean irrelevant data that is created off the **ingestion cycle**. There are two different scenarios:
 
-This is a basic template for building new map colonies services in typescript.
+1. If the cycle completed successfully - delete the original `.tiff` files, and mark the job as `cleaned`.
+1. Upon failure - delete the original `.tiff` files, remove the created tiles, remove the discrete layer which was created in the map server using the `Map Server API` and mark as `cleaned`.
 
-### template features:
-- eslint configuration with @map-colonies/eslint-config
-- prettier
-- jest
-- nvm configuration
-- Dockerfile
-- commitlint setup
-- git hooks
-- logger using @map-colonies/mc-logger
-- swagger ui & swagger json serve
-- config load
-- github templates
-  - bug report
-  - feature request
-  - pull request
-- github actions
-  - lint
-  - test
+### Usage:
+Just hit `npm start` to start the process. 
 
-### usage:
+### Configurations:
 
-1. copy the template files to new service repository.
-1. run `npm install `.
-1. run `npm rebuild husky` to configure commit messages linting.
-1. add the required logic for the new service:
-   - to add new routes: create an express router and connect it to express server in ServerBuilder registerControllers function. when adding handler to the router make sure to add "validate" middleware from 'openapi-express-validator' for request validation.
-   - modify the global error handler in the middleware folder to return better error responses and catch the errors before the global handler (currently it returns empty 500 response )
-
-### usage notes:
-
-1. when importing external dependencies from DI (such as McLogger) in class constructor the following decorator must be used to retrieve instance:
-
-```typescript
-@inject(delay(() => <injection token>)) <variable definition>
-```
-
-usage example:
-
-```typescript
-public constructor(
-    @inject(delay(() => MCLogger)) private readonly logger: MCLogger) {
-  }
-```
+* `LOG_LEVEL` - Could be one of the following: `error`, `warn`, `info`, `debug`.
+* `DB_URL` - The URL of the discrete ingestion database.
+* `MAPPROXY_API_URL` - the URL of the map server API.
+* `SERVICE_PROVIDER` - The service provider in which the tiles will be created - could be one of the following: `S3`, `FS`.
+* `FS_TILES_LOCATION` - Where are the tiles are located in the `FS`. Works only if `SERVER_PROVIDER` is `FS`.
+* `S3_API_VERSION` - The API version of `S3`.
+* `S3_ENDPOINT` - The endpoint to the `S3` server.
+* `S3_ACCESS_KEY_ID` 
+* `S3_SECRET_ACCESS_KEY`
+* `S3_SSL_ENABLED`
+* `S3_MAX_RETRIES` - The maximum number of retries to connect to the `S3` server.
+* `S3_BUCKET`
+* `BATCH_SIZE_DISCRETE_LAYERS` - The number of discrete layers to delete in one batch.
+* `BATCH_SIZE_DIRECTORY_TIFF_DELETION` - The number of directories of tiffs to delete in one batch.
+* `BATCH_SIZE_TILES_DELETION` - The number of tiles delete in one batch. 
+    For `S3`: This is the number of files to delete from the `S3` server - maximum is 1000.
+    For `FS`: This is the number of directories in one batch.

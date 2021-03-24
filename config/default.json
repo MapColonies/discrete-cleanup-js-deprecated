@@ -24,7 +24,7 @@
   },
   "batch_size": {
     "discreteLayers": 10,
-    "tiffDeletion": 1,
+    "tiffDirectoryDeletion": 1,
     "tilesDeletion": 1
   }
 }

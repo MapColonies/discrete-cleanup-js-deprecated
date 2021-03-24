@@ -24,7 +24,7 @@ describe('Cleanup Script', () => {
   });
 
   it('Should delete tiffs from FS according to batch', async () => {
-    const batchSize = config.get('batch_size').tiffDeletion;
+    const batchSize = config.get('batch_size').tiffDirectoryDeletion;
     const tiffDeletion = new TiffDeletion();
     tiffDeletion.deleteDirs = jest.fn().mockReturnValue(undefined);
     await tiffDeletion.deleteFromFs(MockData.urisArray);
