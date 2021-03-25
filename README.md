@@ -5,10 +5,17 @@ The purpose is to clean irrelevant data that is created off the **ingestion cycl
 1. If the cycle completed successfully - delete the original `.tiff` files, and mark the job as `cleaned`.
 1. Upon failure - delete the original `.tiff` files, remove the created tiles, remove the discrete layer which was created in the map server using the `Map Server API` and mark as `cleaned`.
 
-### Usage:
-Just hit `npm start` to start the process. 
+## Usage:
+### Docker
+Build the image using the provided `Dockerfile`. A simple `docker build -t discrete-cleanup <dockerfile_location>` should be enough.
 
-### Configurations:
+Run the image with provided `docker_run.sh` file. You should edit the file and adjust the default configurations.
+
+### Running for development
+`npm install` to install the required dependencies. Adjust configurations (detailed below) for your local needs.
+Hit `npm start` to start the process. 
+
+## Configurations:
 
 * `LOG_LEVEL` - Could be one of the following: `error`, `warn`, `info`, `debug`.
 * `DB_URL` - The URL of the discrete ingestion database.
