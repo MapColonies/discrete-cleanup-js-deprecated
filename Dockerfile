@@ -4,8 +4,8 @@ ENV NODE_ENV=${NODE_ENV}
 
 WORKDIR /usr/app
 
-RUN chgrp -R 0 /usr/app && \
-    chmod -R g=u /usr/app
+# RUN chgrp -R 0 /usr/app && \
+#     chmod -R g=u /usr/app
 
 RUN useradd -ms /bin/bash user && \
     usermod -a -G root user
