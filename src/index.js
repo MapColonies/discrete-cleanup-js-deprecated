@@ -5,9 +5,9 @@ const config = require('config');
 const { SERVICE_PROVIDER } = require('./enums');
 
 function validateConfig() {
-  const service_provider = config.get('service_provider');
-  if (!Object.keys(SERVICE_PROVIDER).includes(service_provider)) {
-    throw new Error('Unsupported service provider: ' + service_provider);
+  const serviceProvider = config.get('tiles_service_provider');
+  if (!Object.keys(SERVICE_PROVIDER).includes(serviceProvider)) {
+    throw new Error('Unsupported tiles service provider: ' + serviceProvider);
   }
 }
 

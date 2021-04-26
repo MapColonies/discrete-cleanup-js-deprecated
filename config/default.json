@@ -8,9 +8,10 @@
   "mapproxy_api": {
     "url": "http://localhost:8081"
   },
-  "service_provider": "S3",
+  "tiles_service_provider": "S3",
   "fs": {
-    "tiles_location": "./tiles"
+    "tiles_location": "./tiles",
+    "sources_location": "/tiffs"
   },
   "s3": {
     "apiVersion": "2006-03-01",

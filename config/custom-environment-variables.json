@@ -8,9 +8,10 @@
   "mapproxy_api": {
     "url": "MAPPROXY_API_URL"
   },
-  "service_provider": "SERVICE_PROVIDER",
+  "tiles_service_provider": "TILES_SERVICE_PROVIDER",
   "fs": {
-    "tiles_location": "FS_TILES_LOCATION"
+    "tiles_location": "FS_TILES_LOCATION",
+    "sources_location": "FS_SOURCES_LOCATION"
   },
   "s3": {
     "apiVersion": "S3_API_VERSION",
@@ -19,7 +20,8 @@
     "secretAccessKey": "S3_SECRET_ACCESS_KEY",
     "sslEnabled": "S3_SSL_ENABLED",
     "maxRetries": "S3_MAX_RETRIES",
-    "bucket": "S3_BUCKET"
+    "bucket": "S3_BUCKET",
+    "deleteBatchSize": "S3_LIST_MAX_KEYS"
   },
   "batch_size": {
     "discreteLayers": "BATCH_SIZE_DISCRETE_LAYERS",

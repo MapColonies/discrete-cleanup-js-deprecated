@@ -10,6 +10,12 @@ function getS3Instance() {
 }
 
 function createS3Client() {
+  const clientConfig = getS3Config();
+  s3Client = new S3(clientConfig);
+  return s3Client;
+}
+
+function getS3Config() {
   const s3Config = config.get('s3');
   const clientConfig = {
     apiVersion: s3Config.apiVersion,
@@ -20,8 +26,13 @@ function createS3Client() {
     sslEnabled: s3Config.sslEnabled,
     s3ForcePathStyle: true
   };
-  s3Client = new S3(clientConfig);
-  return s3Client;
+  if (typeof s3Config.sslEnabled !== 'boolean') {
+    clientConfig.sslEnabled = s3Config.sslEnabled !== 'false';
+  }
+  if (typeof s3Config.maxRetries !== 'number') {
+    clientConfig.maxRetries = parseInt(s3Config.maxRetries);
+  }
+  return clientConfig;
 }
 
 module.exports = { getS3Instance };

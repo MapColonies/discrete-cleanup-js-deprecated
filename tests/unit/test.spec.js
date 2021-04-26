@@ -1,9 +1,11 @@
+const path = require('path');
 const config = require('config');
 const MockData = require('../mocks/data');
 const logger = require('../../src/logger');
 jest.spyOn(logger, 'getLoggerInstance').mockReturnValue({
   log: jest.fn()
 });
+jest.spyOn(path, 'join').mockImplementation((...args) => args.join('/'));
 const TiffDeletion = require('../../src/tiffDeletion');
 const TilesDeletion = require('../../src/tilesDeletion');
 
