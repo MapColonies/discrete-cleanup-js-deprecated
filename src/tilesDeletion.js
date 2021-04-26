@@ -14,7 +14,7 @@ class TilesDeletion {
 
   async delete(discreteArray) {
     const pathsArray = this.tilesLocationParser(discreteArray);
-    if (config.get('service_provider') === SERVICE_PROVIDER.S3) {
+    if (config.get('tiles_service_provider') === SERVICE_PROVIDER.S3) {
       await this.executeS3Loop(pathsArray);
     } else {
       await this.executeFsLoop(pathsArray);
@@ -79,11 +79,11 @@ class TilesDeletion {
   }
 
   tilesLocationParser(discreteArray) {
-    if (config.get('service_provider') === SERVICE_PROVIDER.S3) {
-      return discreteArray.map((discrete) => `${discrete.id}/${discrete.version}`);
+    if (config.get('tiles_service_provider') === SERVICE_PROVIDER.S3) {
+      return discreteArray.map((discrete) => `${discrete.parameters.originDirectory}`);
     } else {
       const fsTilesLocation = config.get('fs').tiles_location;
-      const allURIs = discreteArray.map((discrete) => `${fsTilesLocation}/${discrete.id}/${discrete.version}`);
+      const allURIs = discreteArray.map((discrete) => `${fsTilesLocation}/${discrete.parameters.originDirectory}`);
       return allURIs;
     }
   }

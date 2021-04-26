@@ -6,6 +6,7 @@ const { getLoggerInstance } = require('./logger');
 const TilesDeletion = require('./tilesDeletion');
 const TiffDeletion = require('./tiffDeletion');
 
+const JOB_TYPE = 'Discrete-Tiling';
 class CleanupScript {
   constructor() {
     this.logger = getLoggerInstance();
@@ -20,24 +21,24 @@ class CleanupScript {
   }
 
   async getSuccessNotCleanedTasks() {
-    const result = await this.executeDBRequest('get', 'discrete?isCleaned=false&status=Completed');
-    return result.data;
+    const result = await this.executeDBRequest('get', `jobs?isCleaned=false&status=Completed&type=${JOB_TYPE}`);
+    return result.data ? result.data : [];
   }
 
   async getFailedAndNotCleanedTasks() {
-    const result = await this.executeDBRequest('get', 'discrete?isCleaned=false&status=Failed');
-    return result.data;
+    const result = await this.executeDBRequest('get', `jobs?isCleaned=false&status=Failed&type=${JOB_TYPE}`);
+    return result.data ? result.data : [];
   }
 
   async deleteMapProxyLayer(discreteLayers) {
     const mapproxyUrl = config.get('mapproxy_api').url;
     const mapProxyLayersToDelete = [];
     for (const discrete of discreteLayers) {
-      mapProxyLayersToDelete.push(axios.delete(`${mapproxyUrl}/layer/${discrete.id}-${discrete.version}`));
+      mapProxyLayersToDelete.push(axios.delete(`${mapproxyUrl}/layer/${discrete.resourceId}-${discrete.version}`));
     }
     this.logger.log(
       'info',
-      `Deleting layers [${discreteLayers.map((discrete) => `${discrete.id}-${discrete.version}`)}] from mapproxy in path [${mapproxyUrl}]`
+      `Deleting layers [${discreteLayers.map((discrete) => `${discrete.resourceId}-${discrete.version}`)}] from mapproxy in path [${mapproxyUrl}]`
     );
     try {
       await Promise.all(mapProxyLayersToDelete);
@@ -45,7 +46,9 @@ class CleanupScript {
       if (err && err.response && err.response.status === StatusCodes.NOT_FOUND) {
         this.logger.log(
           'info',
-          `Could not find layers [${discreteLayers.map((discrete) => `${discrete.id}-${discrete.version}`)}] from mapproxy in path [${mapproxyUrl}]`
+          `Could not find layers [${discreteLayers.map(
+            (discrete) => `${discrete.resourceId}-${discrete.version}`
+          )}] from mapproxy in path [${mapproxyUrl}]`
         );
       } else {
         throw err;
@@ -56,7 +59,7 @@ class CleanupScript {
   async markAsCompleted(notCleaned) {
     const updateArray = [];
     for (const discrete of notCleaned) {
-      updateArray.push(this.executeDBRequest('put', `discrete/${discrete.id}/${discrete.version}`, { isCleaned: true }));
+      updateArray.push(this.executeDBRequest('put', `jobs/${discrete.id}`, { isCleaned: true }));
     }
     await Promise.all(updateArray);
   }

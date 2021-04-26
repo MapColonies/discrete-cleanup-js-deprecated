@@ -20,7 +20,7 @@ Hit `npm start` to start the process.
 * `LOG_LEVEL` - Could be one of the following: `error`, `warn`, `info`, `debug`.
 * `DB_URL` - The URL of the discrete ingestion database.
 * `MAPPROXY_API_URL` - the URL of the map server API.
-* `SERVICE_PROVIDER` - The service provider in which the tiles will be created - could be one of the following: `S3`, `FS`.
+* `TILES_SERVICE_PROVIDER` - The service provider in which the tiles will be created - could be one of the following: `S3`, `FS`.
 * `FS_TILES_LOCATION` - Where are the tiles are located in the `FS`. Works only if `SERVER_PROVIDER` is `FS`.
 * `S3_API_VERSION` - The API version of `S3`.
 * `S3_ENDPOINT` - The endpoint to the `S3` server.
