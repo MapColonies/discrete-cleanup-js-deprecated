@@ -44,14 +44,10 @@ class CleanupScript {
     try {
       await Promise.allSettled(mapProxyLayersToDelete).then((results) => {
         results.filter((result) => result.status === 'rejected')
-          .forEach((result) => {
+          .forEach((result, index) => {
             if (result && result.reason && result.reason.response && result.reason.response.status !== StatusCodes.NOT_FOUND) {
-              this.logger.log('error', `Could not delete layer from mapproxy [${JSON.stringify(result)}]`);
-              const discreteIndex = results.findIndex((currentResult) => {
-                return currentResult === result;
-              });
-              const discrete = discreteLayers[discreteIndex];
-              failedDiscreteLayers.push(discrete);
+              this.logger.log('error', `Could not delete layer from mapproxy [${result.message}]`);
+              failedDiscreteLayers.push(discreteLayers[index]);
             }
           });
       });
