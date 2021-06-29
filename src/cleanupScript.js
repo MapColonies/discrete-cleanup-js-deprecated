@@ -7,6 +7,7 @@ const TilesDeletion = require('./tilesDeletion');
 const TiffDeletion = require('./tiffDeletion');
 
 const JOB_TYPE = 'Discrete-Tiling';
+
 class CleanupScript {
   constructor() {
     this.logger = getLoggerInstance();
@@ -41,19 +42,16 @@ class CleanupScript {
       'info',
       `Deleting layers [${discreteLayers.map((discrete) => `${discrete.resourceId}-${discrete.version}`)}] from mapproxy in path [${mapproxyUrl}]`
     );
-    try {
-      await Promise.allSettled(mapProxyLayersToDelete).then((results) => {
-        results.filter((result) => result.status === 'rejected')
-          .forEach((result, index) => {
-            if (result && result.reason && result.reason.response && result.reason.response.status !== StatusCodes.NOT_FOUND) {
-              this.logger.log('error', `Could not delete layer from mapproxy [${result.message}]`);
-              failedDiscreteLayers.push(discreteLayers[index]);
-            }
-          });
-      });
-    } catch (err) {
-      throw err;
-    }
+
+    await Promise.allSettled(mapProxyLayersToDelete).then((results) => {
+      results.filter((result) => result.status === 'rejected')
+        .forEach((result, index) => {
+          if (result && result.reason && result.reason.response && result.reason.response.status !== StatusCodes.NOT_FOUND) {
+            this.logger.log('error', `Could not delete layer from mapproxy [${result.message}]`);
+            failedDiscreteLayers.push(discreteLayers[index]);
+          }
+        });
+    });
     return failedDiscreteLayers;
   }
 
