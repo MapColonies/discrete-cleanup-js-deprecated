@@ -45,7 +45,13 @@ class CleanupScript {
 
     await Promise.allSettled(mapProxyLayersToDelete).then((results) => {
       results.forEach((result, index) => {
-        if (result && result.status === 'rejected' && result.reason && result.reason.response && result.reason.response.status !== StatusCodes.NOT_FOUND) {
+        if (
+          result &&
+          result.status === 'rejected' &&
+          result.reason &&
+          result.reason.response &&
+          result.reason.response.status !== StatusCodes.NOT_FOUND
+        ) {
           this.logger.log('error', `Could not delete layer from mapproxy [${result.message}]`);
           failedDiscreteLayers.push(discreteLayers[index]);
         }
@@ -74,11 +80,7 @@ class CleanupScript {
       await tiffDeletionInstance.delete(currentBatch);
       await tilesDeletionInstance.delete(currentBatch);
       const failedDiscreteLayers = await this.deleteMapProxyLayer(currentBatch);
-      const completedDiscretes = currentBatch.filter((discreteFromBatch) => {
-        return !failedDiscreteLayers.find((discreteFromFailed) => {
-          return discreteFromBatch.id === discreteFromFailed.id;
-        });
-      });
+      const completedDiscretes = currentBatch.filter((el) => !failedDiscreteLayers.includes(el));
       await this.markAsCompleted(completedDiscretes);
     }
 
