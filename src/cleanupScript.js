@@ -7,6 +7,7 @@ const TilesDeletion = require('./tilesDeletion');
 const TiffDeletion = require('./tiffDeletion');
 
 const JOB_TYPE = 'Discrete-Tiling';
+
 class CleanupScript {
   constructor() {
     this.logger = getLoggerInstance();
@@ -32,6 +33,7 @@ class CleanupScript {
 
   async deleteMapProxyLayer(discreteLayers) {
     const mapproxyUrl = config.get('mapproxy_api').url;
+    const failedDiscreteLayers = [];
     const mapProxyLayersToDelete = [];
     for (const discrete of discreteLayers) {
       mapProxyLayersToDelete.push(axios.delete(`${mapproxyUrl}/layer/${discrete.resourceId}-${discrete.version}`));
@@ -40,20 +42,22 @@ class CleanupScript {
       'info',
       `Deleting layers [${discreteLayers.map((discrete) => `${discrete.resourceId}-${discrete.version}`)}] from mapproxy in path [${mapproxyUrl}]`
     );
-    try {
-      await Promise.all(mapProxyLayersToDelete);
-    } catch (err) {
-      if (err && err.response && err.response.status === StatusCodes.NOT_FOUND) {
-        this.logger.log(
-          'info',
-          `Could not find layers [${discreteLayers.map(
-            (discrete) => `${discrete.resourceId}-${discrete.version}`
-          )}] from mapproxy in path [${mapproxyUrl}]`
-        );
-      } else {
-        throw err;
-      }
-    }
+
+    await Promise.allSettled(mapProxyLayersToDelete).then((results) => {
+      results.forEach((result, index) => {
+        if (
+          result &&
+          result.status === 'rejected' &&
+          result.reason &&
+          result.reason.response &&
+          result.reason.response.status !== StatusCodes.NOT_FOUND
+        ) {
+          this.logger.log('error', `Could not delete layer from mapproxy [${result.message}]`);
+          failedDiscreteLayers.push(discreteLayers[index]);
+        }
+      });
+    });
+    return failedDiscreteLayers;
   }
 
   async markAsCompleted(notCleaned) {
@@ -75,8 +79,9 @@ class CleanupScript {
       const currentBatch = notCleanedAndFailed.slice(i, i + BATCH_SIZE.discreteLayers);
       await tiffDeletionInstance.delete(currentBatch);
       await tilesDeletionInstance.delete(currentBatch);
-      await this.deleteMapProxyLayer(currentBatch);
-      await this.markAsCompleted(currentBatch);
+      const failedDiscreteLayers = await this.deleteMapProxyLayer(currentBatch);
+      const completedDiscretes = currentBatch.filter((el) => !failedDiscreteLayers.includes(el));
+      await this.markAsCompleted(completedDiscretes);
     }
 
     for (let i = 0; i < notCleanedAndSuccess.length; i += BATCH_SIZE.discreteLayers) {

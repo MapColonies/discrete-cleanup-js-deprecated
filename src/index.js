@@ -16,7 +16,7 @@ try {
   validateConfig();
   cleanupScript = new CleanupScript();
 } catch (error) {
-  logger.log('error', 'An error occured: ' + JSON.stringify(error, Object.getOwnPropertyNames(error)));
+  logger.log('error', 'An error occurred: ' + JSON.stringify(error, Object.getOwnPropertyNames(error)));
   process.exit(1);
 }
 
@@ -24,6 +24,6 @@ cleanupScript
   .main()
   .then(() => logger.log('info', 'Successfully completed cleanup job'))
   .catch((error) => {
-    logger.log('error', 'An error occured: ' + JSON.stringify(error, Object.getOwnPropertyNames(error)));
+    logger.log('error', 'An error occurred: ' + JSON.stringify(error, Object.getOwnPropertyNames(error)));
     process.exit(1);
   });

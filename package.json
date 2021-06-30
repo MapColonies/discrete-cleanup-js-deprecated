@@ -56,6 +56,6 @@
     "jest-create-mock-instance": "^1.1.0",
     "jest-html-reporters": "^2.0.3",
     "prettier": "^2.2.1",
-    "standard-version": "^9.0.0"
+    "standard-version": "^9.3.0"
   }
 }
