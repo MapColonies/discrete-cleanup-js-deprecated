@@ -92,7 +92,6 @@ class CleanupScript {
     for (let i = 0; i < notCleanedAndFailed.length; i += batchSize.discreteLayers) {
       const currentBatch = notCleanedAndFailed.slice(i, i + batchSize.discreteLayers);
       const expiredBatch = this.filterExpiredFailedTasks(currentBatch, deleteDate);
-      console.log(expiredBatch.length, deleteDate);
       await tiffDeletionInstance.delete(expiredBatch);
       await this.tilesDeletionInstance.delete(currentBatch);
       const failedDiscreteLayers = await this.deleteMapProxyLayer(currentBatch);
