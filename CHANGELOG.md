@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/MapColonies/discrete-cleanup/compare/v1.1.0...v1.2.0) (2021-10-10)
+
+
+### Features
+
+* Delayed source deletion ([#18](https://github.com/MapColonies/discrete-cleanup/issues/18)) ([bcfacb5](https://github.com/MapColonies/discrete-cleanup/commit/bcfacb5c03c8905ff6f7bb18d47278aedf8f325d))
+
+
+### Bug Fixes
+
+* fix mark some as deleted instead of all bug ([#17](https://github.com/MapColonies/discrete-cleanup/issues/17)) ([c6d98d2](https://github.com/MapColonies/discrete-cleanup/commit/c6d98d263d52bf28105c4423c6efc6b05355c910))
+
 ## 1.1.0 (2021-06-10)
 
 
