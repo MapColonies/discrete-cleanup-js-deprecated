@@ -74,10 +74,10 @@ class CleanupScript {
     const BATCH_SIZE = config.get('batch_size');
 
     await this.cleanFailedTasks(tiffDeletionInstance, BATCH_SIZE);
-    await this.CleanSuccessfulTasks(tiffDeletionInstance, BATCH_SIZE);
+    await this.cleanSuccessfulTasks(tiffDeletionInstance, BATCH_SIZE);
   }
 
-  async CleanSuccessfulTasks(tiffDeletionInstance, BATCH_SIZE) {
+  async cleanSuccessfulTasks(tiffDeletionInstance, BATCH_SIZE) {
     const notCleanedAndSuccess = await this.getSuccessNotCleanedTasks();
     for (let i = 0; i < notCleanedAndSuccess.length; i += BATCH_SIZE.discreteLayers) {
       const currentBatch = notCleanedAndSuccess.slice(i, i + BATCH_SIZE.discreteLayers);
