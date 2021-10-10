@@ -27,5 +27,9 @@
     "discreteLayers": "BATCH_SIZE_DISCRETE_LAYERS",
     "tiffDirectoryDeletion": "BATCH_SIZE_DIRECTORY_TIFF_DELETION",
     "tilesDeletion": "BATCH_SIZE_TILES_DELETION"
+  },
+  "failed_cleanup_delay_days": {
+    "__name": "FAILED_CLEANUP_DELAY_DAYS",
+    "__format": "number"
   }
 }

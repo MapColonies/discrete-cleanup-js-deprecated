@@ -27,5 +27,6 @@
     "discreteLayers": 10,
     "tiffDirectoryDeletion": 1,
     "tilesDeletion": 1
-  }
+  },
+  "failed_cleanup_delay_days": 14
 }
