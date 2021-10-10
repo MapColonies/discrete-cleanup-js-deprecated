@@ -12,6 +12,7 @@ class CleanupScript {
   constructor() {
     this.logger = getLoggerInstance();
     this.s3Client = getS3Instance();
+    this.tilesDeletionInstance = new TilesDeletion();
   }
 
   executeDBRequest(method, url, data) {
@@ -70,25 +71,45 @@ class CleanupScript {
 
   async main() {
     const tiffDeletionInstance = new TiffDeletion();
-    const tilesDeletionInstance = new TilesDeletion();
     const notCleanedAndSuccess = await this.getSuccessNotCleanedTasks();
-    const notCleanedAndFailed = await this.getFailedAndNotCleanedTasks();
     const BATCH_SIZE = config.get('batch_size');
 
-    for (let i = 0; i < notCleanedAndFailed.length; i += BATCH_SIZE.discreteLayers) {
-      const currentBatch = notCleanedAndFailed.slice(i, i + BATCH_SIZE.discreteLayers);
-      await tiffDeletionInstance.delete(currentBatch);
-      await tilesDeletionInstance.delete(currentBatch);
-      const failedDiscreteLayers = await this.deleteMapProxyLayer(currentBatch);
-      const completedDiscretes = currentBatch.filter((el) => !failedDiscreteLayers.includes(el));
-      await this.markAsCompleted(completedDiscretes);
-    }
+    await this.cleanFailedTasks(tiffDeletionInstance, BATCH_SIZE);
 
     for (let i = 0; i < notCleanedAndSuccess.length; i += BATCH_SIZE.discreteLayers) {
       const currentBatch = notCleanedAndSuccess.slice(i, i + BATCH_SIZE.discreteLayers);
       await tiffDeletionInstance.delete(currentBatch);
       await this.markAsCompleted(currentBatch);
     }
+  }
+
+  async cleanFailedTasks(tiffDeletionInstance, batchSize) {
+    const FAILED_CLEANUP_DELAY = config.get('failed_cleanup_delay_days');
+    const deleteDate = new Date();
+    deleteDate.setDate(deleteDate.getDate() - FAILED_CLEANUP_DELAY);
+    const notCleanedAndFailed = await this.getFailedAndNotCleanedTasks();
+
+    for (let i = 0; i < notCleanedAndFailed.length; i += batchSize.discreteLayers) {
+      const currentBatch = notCleanedAndFailed.slice(i, i + batchSize.discreteLayers);
+      const expiredBatch = this.filterExpiredFailedTasks(currentBatch, deleteDate);
+      console.log(expiredBatch.length, deleteDate);
+      await tiffDeletionInstance.delete(expiredBatch);
+      await this.tilesDeletionInstance.delete(currentBatch);
+      const failedDiscreteLayers = await this.deleteMapProxyLayer(currentBatch);
+      const completedDiscretes = expiredBatch.filter((el) => !failedDiscreteLayers.includes(el));
+      await this.markAsCompleted(completedDiscretes);
+    }
+  }
+
+  filterExpiredFailedTasks(tasks, deleteDate) {
+    const filteredTasks = [];
+    for (let i = 0; i < tasks.length; i++) {
+      const updateDate = new Date(tasks[i].updated);
+      if (updateDate <= deleteDate) {
+        filteredTasks.push(tasks[i]);
+      }
+    }
+    return filteredTasks;
   }
 }
 
