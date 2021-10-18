@@ -90,7 +90,7 @@ describe('cleanup script', () => {
 
   describe('cleanFailedTasks', () => {
     it('failed job sources will be deleted only for expired failed jobs', async () => {
-      jest.spyOn(cleanupScript, 'getFailedAndNotCleanedTasks').mockResolvedValue(filedJobs);
+      jest.spyOn(cleanupScript, 'getFailedAndNotCleanedJobs').mockResolvedValue(filedJobs);
       const mapProxyMock = jest.spyOn(cleanupScript, 'deleteMapProxyLayer').mockResolvedValue([]);
       const completeMock = jest.spyOn(cleanupScript, 'markAsCompleted').mockResolvedValue(undefined);
 
