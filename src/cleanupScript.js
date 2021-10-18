@@ -1,6 +1,5 @@
 const config = require('config');
 const axios = require('axios');
-const { StatusCodes } = require('http-status-codes');
 const { getS3Instance } = require('./s3Client');
 const { getLoggerInstance } = require('./logger');
 const TilesDeletion = require('./tilesDeletion');
@@ -22,43 +21,40 @@ class CleanupScript {
     return axios({ method, url: urlToExecute, data });
   }
 
-  async getSuccessNotCleanedTasks() {
+  async getSuccessNotCleanedJobs() {
     const result = await this.executeDBRequest('get', `jobs?isCleaned=false&status=Completed&type=${JOB_TYPE}`);
     return result.data ? result.data : [];
   }
 
-  async getFailedAndNotCleanedTasks() {
+  async getFailedAndNotCleanedJobs() {
     const result = await this.executeDBRequest('get', `jobs?isCleaned=false&status=Failed&type=${JOB_TYPE}`);
     return result.data ? result.data : [];
   }
 
   async deleteMapProxyLayer(discreteLayers) {
     const mapproxyUrl = config.get('mapproxy_api').url;
-    const failedDiscreteLayers = [];
     const mapProxyLayersToDelete = [];
-    for (const discrete of discreteLayers) {
-      mapProxyLayersToDelete.push(axios.delete(`${mapproxyUrl}/layer/${discrete.resourceId}-${discrete.version}`));
-    }
-    this.logger.log(
-      'info',
-      `Deleting layers [${discreteLayers.map((discrete) => `${discrete.resourceId}-${discrete.version}`)}] from mapproxy in path [${mapproxyUrl}]`
-    );
 
-    await Promise.allSettled(mapProxyLayersToDelete).then((results) => {
-      results.forEach((result, index) => {
-        if (
-          result &&
-          result.status === 'rejected' &&
-          result.reason &&
-          result.reason.response &&
-          result.reason.response.status !== StatusCodes.NOT_FOUND
-        ) {
-          this.logger.log('error', `Could not delete layer from mapproxy [${result.message}]`);
-          failedDiscreteLayers.push(discreteLayers[index]);
-        }
-      });
-    });
-    return failedDiscreteLayers;
+    for (const discrete of discreteLayers) {
+      const productType = discrete.parameters.metadata.productType;
+      const orthophoto = 'Orthophoto';
+      this.logger.log(`info', 'Deleting layer: [${discrete.resourceId}-${discrete.version}-${productType}]`);
+      mapProxyLayersToDelete.push(`${discrete.resourceId}-${discrete.version}-${productType}`);
+      if (productType === 'OrthophotoHistory') {
+        mapProxyLayersToDelete.push(`${discrete.resourceId}-${orthophoto}`);
+      }
+    }
+    this.logger.log('info', `Deleting layers [${mapProxyLayersToDelete.join(',')}] from mapproxy in path: ${mapproxyUrl}`);
+
+    try {
+      const queryParams = mapProxyLayersToDelete.map((layer) => `layerNames=${layer}`).join('&');
+      const removeLayersUrl = `${mapproxyUrl}/layer?${queryParams}`;
+      await axios.delete(removeLayersUrl);
+      return [];
+    } catch (error) {
+      this.logger.log('error', `Could not delete layers from mapproxy: ${error.response.data.message}`);
+      return mapProxyLayersToDelete;
+    }
   }
 
   async markAsCompleted(notCleaned) {
@@ -78,7 +74,7 @@ class CleanupScript {
   }
 
   async cleanSuccessfulTasks(tiffDeletionInstance, BATCH_SIZE) {
-    const notCleanedAndSuccess = await this.getSuccessNotCleanedTasks();
+    const notCleanedAndSuccess = await this.getSuccessNotCleanedJobs();
     for (let i = 0; i < notCleanedAndSuccess.length; i += BATCH_SIZE.discreteLayers) {
       const currentBatch = notCleanedAndSuccess.slice(i, i + BATCH_SIZE.discreteLayers);
       await tiffDeletionInstance.delete(currentBatch);
@@ -90,7 +86,7 @@ class CleanupScript {
     const FAILED_CLEANUP_DELAY = config.get('failed_cleanup_delay_days');
     const deleteDate = new Date();
     deleteDate.setDate(deleteDate.getDate() - FAILED_CLEANUP_DELAY);
-    const notCleanedAndFailed = await this.getFailedAndNotCleanedTasks();
+    const notCleanedAndFailed = await this.getFailedAndNotCleanedJobs();
 
     for (let i = 0; i < notCleanedAndFailed.length; i += batchSize.discreteLayers) {
       const currentBatch = notCleanedAndFailed.slice(i, i + batchSize.discreteLayers);
