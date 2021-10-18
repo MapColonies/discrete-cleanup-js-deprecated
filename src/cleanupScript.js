@@ -38,13 +38,13 @@ class CleanupScript {
     for (const discrete of discreteLayers) {
       const productType = discrete.parameters.metadata.productType;
       const orthophoto = 'Orthophoto';
-      mapProxyLayersToDelete.push(`${discrete.resourceId}-${orthophoto}`);
+      this.logger.log(`info', 'Deleting layer: [${discrete.resourceId}-${discrete.version}-${discrete.parameters.metadata.productType}]`);
+      mapProxyLayersToDelete.push(`${discrete.resourceId}-${discrete.version}-${discrete.parameters.metadata.productType}`);
       if (productType === 'OrthophotoHistory') {
-        this.logger.log(`info', 'Deleting layer: [${discrete.resourceId}-${discrete.version}-${discrete.parameters.metadata.productType}]`);
-        mapProxyLayersToDelete.push(`${discrete.resourceId}-${discrete.version}-${discrete.parameters.metadata.productType}`);
+        mapProxyLayersToDelete.push(`${discrete.resourceId}-${orthophoto}`);
       }
     }
-    this.logger.log('info', `Deleting layers [${mapProxyLayersToDelete}] from mapproxy in path: ${mapproxyUrl}`);
+    this.logger.log('info', `Deleting layers [${mapProxyLayersToDelete.join(',')}] from mapproxy in path: ${mapproxyUrl}`);
 
     try {
       const queryParams = mapProxyLayersToDelete.map((layer) => `layerNames=${layer}`).join('&');
