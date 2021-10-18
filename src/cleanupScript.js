@@ -39,7 +39,7 @@ class CleanupScript {
       const productType = discrete.parameters.metadata.productType;
       const orthophoto = 'Orthophoto';
       this.logger.log(`info', 'Deleting layer: [${discrete.resourceId}-${discrete.version}-${productType}]`);
-      mapProxyLayersToDelete.push(`${discrete.resourceId}-${discrete.version}-${discrete.parameters.metadata.productType}`);
+      mapProxyLayersToDelete.push(`${discrete.resourceId}-${discrete.version}-${productType}`);
       if (productType === 'OrthophotoHistory') {
         mapProxyLayersToDelete.push(`${discrete.resourceId}-${orthophoto}`);
       }
